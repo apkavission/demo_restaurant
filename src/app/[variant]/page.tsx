@@ -42,14 +42,14 @@ export default async function VariantHome({ params }: Props) {
   return (
     <>
       {/* ---------------------------------------------------------------- */}
-      <section className="border-b border-border bg-surface">
+      <section className="hero-wash">
         <div className="container-page grid gap-12 py-16 md:grid-cols-[1.15fr_1fr] md:items-center md:py-24">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+            <p className="eyebrow">
               {variant.industryLabel}
             </p>
 
-            <h1 className="font-display mt-4 text-4xl font-semibold leading-[1.1] tracking-tight sm:text-5xl">
+            <h1 className="font-display display-1 mt-4 font-semibold">
               {variant.tagline ?? variant.businessName}
             </h1>
 
@@ -132,7 +132,7 @@ export default async function VariantHome({ params }: Props) {
         <section className="container-page py-16 md:py-20">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <h2 className="font-display text-3xl font-semibold tracking-tight">The menu</h2>
+              <h2 className="font-display display-2 rule-accent font-semibold">The menu</h2>
               <p className="measure mt-2 text-muted">
                 Prices are what you would actually pay, and where a case needs
                 assessing first 
@@ -152,7 +152,7 @@ export default async function VariantHome({ params }: Props) {
             {offers.slice(0, 6).map((offer) => (
               <li
                 key={offer.id}
-                className="flex flex-col rounded-[var(--radius-card)] border border-border bg-surface p-6 shadow-[var(--shadow-1)] transition-shadow hover:shadow-[var(--shadow-2)]"
+                className="card flex flex-col p-6"
               >
                 <h3 className="font-display text-lg font-semibold">{offer.name}</h3>
                 {offer.summary && (
@@ -179,7 +179,7 @@ export default async function VariantHome({ params }: Props) {
       {people.length > 0 && (
         <section className="border-y border-border bg-surface">
           <div className="container-page py-16 md:py-20">
-            <h2 className="font-display text-3xl font-semibold tracking-tight">
+            <h2 className="font-display display-2 rule-accent font-semibold">
               Our team
             </h2>
             <p className="measure mt-2 text-muted">
@@ -214,7 +214,7 @@ export default async function VariantHome({ params }: Props) {
       {/* ---------------------------------------------------------------- */}
       {testimonials.length > 0 && (
         <section className="container-page py-16 md:py-20">
-          <h2 className="font-display text-3xl font-semibold tracking-tight">
+          <h2 className="font-display display-2 rule-accent font-semibold">
             What people said
           </h2>
           {/*
@@ -261,7 +261,7 @@ export default async function VariantHome({ params }: Props) {
         <section className="border-t border-border bg-surface">
           <div className="container-page grid gap-10 py-16 md:grid-cols-[1fr_1.4fr] md:py-20">
             <div>
-              <h2 className="font-display text-3xl font-semibold tracking-tight">
+              <h2 className="font-display display-2 rule-accent font-semibold">
                 Questions people ask
               </h2>
               <p className="measure mt-2 text-muted">
@@ -287,7 +287,7 @@ export default async function VariantHome({ params }: Props) {
       {/* ---------------------------------------------------------------- */}
       <section className="container-page py-16 md:py-24">
         <div className="rounded-[var(--radius-card)] border border-border bg-accent-soft p-10 text-center">
-          <h2 className="font-display text-3xl font-semibold tracking-tight">
+          <h2 className="font-display display-2 rule-accent font-semibold">
             {book}
           </h2>
           <p className="measure mx-auto mt-3 text-muted">

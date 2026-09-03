@@ -1,10 +1,12 @@
 "use client";
 
 import { useActionState } from "react";
-import { Check, Loader2 } from "lucide-react";
+import { BrandSpinner } from "@/components/brand/brand-loader";
+import { Check } from "lucide-react";
 import { markMessageRead, setEnquiryStatus } from "@/lib/actions/admin";
 import { idleState } from "@/lib/form-state";
 import { cn } from "@/lib/utils";
+import { useBusyWhile } from "@/components/forms/use-busy-while";
 
 /**
  * The two controls that make the demo a working thing rather than a picture.
@@ -30,6 +32,7 @@ export function EnquiryStatus({
   status: string;
 }) {
   const [state, action, pending] = useActionState(setEnquiryStatus, idleState);
+  useBusyWhile(pending, "Saving enquiry status");
 
   return (
     <form action={action} className="flex flex-wrap items-center gap-2">
@@ -56,7 +59,7 @@ export function EnquiryStatus({
         disabled={pending}
         className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-sm transition-colors hover:bg-surface-2 disabled:opacity-60"
       >
-        {pending ? <Loader2 className="size-3.5 animate-spin" aria-hidden /> : null}
+        {pending ? <BrandSpinner /> : null}
         {pending ? "Saving" : "Save"}
       </button>
 
@@ -77,6 +80,7 @@ export function EnquiryStatus({
 
 export function MarkRead({ id }: { id: string }) {
   const [state, action, pending] = useActionState(markMessageRead, idleState);
+  useBusyWhile(pending, "Working");
 
   return (
     <form action={action}>

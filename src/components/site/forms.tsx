@@ -1,10 +1,12 @@
 "use client";
 
 import { useActionState, useId } from "react";
-import { CheckCircle2, Loader2, Send } from "lucide-react";
+import { BrandSpinner } from "@/components/brand/brand-loader";
+import { CheckCircle2, Send } from "lucide-react";
 import { sendMessage, submitEnquiry } from "@/lib/actions/public";
 import { idleState } from "@/lib/form-state";
 import { cn } from "@/lib/utils";
+import { useBusyWhile } from "@/components/forms/use-busy-while";
 
 /**
  * The two forms a visitor fills in.
@@ -92,6 +94,7 @@ export function EnquiryForm({
   cta: string;
 }) {
   const [state, action, pending] = useActionState(submitEnquiry, idleState);
+  useBusyWhile(pending, "Sending enquiry");
 
   if (state.status === "success" && state.message) {
     return <Done message={state.message} />;
@@ -164,7 +167,6 @@ export function EnquiryForm({
           />
         )}
       </Field>
-
 
       <div className="grid gap-5 sm:grid-cols-2">
         <Field label="What for">
@@ -249,7 +251,7 @@ export function EnquiryForm({
         disabled={pending}
         className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-3.5 text-sm font-semibold text-accent-fg transition-opacity hover:opacity-90 disabled:opacity-60 sm:w-auto"
       >
-        {pending && <Loader2 className="size-4 animate-spin" aria-hidden />}
+        {pending && <BrandSpinner />}
         {pending ? "Sending" : cta}
       </button>
     </form>
@@ -258,6 +260,7 @@ export function EnquiryForm({
 
 export function MessageForm({ variant }: { variant: string }) {
   const [state, action, pending] = useActionState(sendMessage, idleState);
+  useBusyWhile(pending, "Sending message");
 
   if (state.status === "success" && state.message) {
     return <Done message={state.message} />;
@@ -312,7 +315,7 @@ export function MessageForm({ variant }: { variant: string }) {
         disabled={pending}
         className="inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 py-3.5 text-sm font-semibold text-accent-fg transition-opacity hover:opacity-90 disabled:opacity-60"
       >
-        {pending ? <Loader2 className="size-4 animate-spin" aria-hidden /> : <Send className="size-4" aria-hidden />}
+        {pending ? <BrandSpinner /> : <Send className="size-4" aria-hidden />}
         {pending ? "Sending" : "Send it"}
       </button>
     </form>

@@ -120,7 +120,7 @@ export default async function AdminHome() {
           return (
             <div
               key={card.label}
-              className="rounded-[var(--radius-card)] border border-border bg-surface p-5"
+              className="card p-5"
             >
               <Icon className="size-4 text-accent" aria-hidden />
               <dt className="mt-3 text-sm text-muted">{card.label}</dt>
@@ -148,7 +148,7 @@ export default async function AdminHome() {
               stops working on its own date.
             </p>
           ) : (
-            <ul className="mt-4 divide-y divide-border rounded-[var(--radius-card)] border border-border bg-surface">
+            <ul className="mt-4 divide-y divide-border card">
               {live.map((link) => (
                 <li key={link.id} className="flex flex-wrap items-center gap-3 p-4">
                   <span className="min-w-0 flex-1">
@@ -181,7 +181,7 @@ export default async function AdminHome() {
             {bookings.map((booking) => (
               <li
                 key={booking.id}
-                className="rounded-[var(--radius-card)] border border-border bg-surface p-5"
+                className="card p-5"
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0">

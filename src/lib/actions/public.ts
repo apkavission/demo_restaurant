@@ -1,6 +1,7 @@
 "use server";
 
 import { z } from "zod";
+import { acknowledge } from "@/lib/email/acknowledge";
 import { fieldErrors, type FormState } from "@/lib/form-state";
 import { createClient } from "@/lib/supabase/server";
 
@@ -131,6 +132,27 @@ export async function submitEnquiry(
     };
   }
 
+
+  /*
+    The note back to whoever asked.
+
+    After the insert, and it cannot undo it: `acknowledge` swallows every mail
+    failure by design, because the row is already saved and the person is about
+    to be told so. A missing email is a missing courtesy, not lost work.
+  */
+  await acknowledge({
+    variantSlug: parsed.data.variant,
+    to: parsed.data.email || null,
+    name: parsed.data.person_name,
+    rows: [
+      ["Day", parsed.data.preferred_on],
+      ...((parsed.data.preferred_slot ? [["Time", parsed.data.preferred_slot]] : []) as Array<
+        [string, string]
+      >),
+      ["Phone", parsed.data.phone],
+    ],
+    note: parsed.data.note,
+  });
   return {
     status: "success",
     message: "Sent. Somebody will come back to you — nothing is charged to ask.",

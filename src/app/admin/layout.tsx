@@ -1,7 +1,6 @@
-import Link from "next/link";
 import type { Metadata } from "next";
-import { ShieldCheck } from "lucide-react";
-import { getAdminSession, type AdminSession } from "@/lib/auth";
+import { AdminShell } from "@/components/admin/shell";
+import { getAdminSession } from "@/lib/auth";
 import { signOut } from "@/lib/actions/admin";
 
 export const metadata: Metadata = {
@@ -12,100 +11,60 @@ export const metadata: Metadata = {
 /**
  * The panel's shell.
  *
- * **The menu is built from the role, and the two super-admin entries are absent
- * rather than disabled** for anybody else. A greyed-out "Share links" tells a
- * colleague that a feature exists which they may not have, which is an
- * invitation to ask why — and the honest answer is a conversation about
- * seniority nobody wanted to have over a menu item.
+ * A rail beside the work rather than a strip of links above it — the shape the
+ * company admin uses, so the nine applications read as one company's work
+ * rather than as products bought from different people. `AdminShell` holds the
+ * markup and the reasoning; this file decides only who is asking and what they
+ * may open.
  *
- * The role is written in the header on purpose. Somebody wondering why they
- * cannot issue a link should be able to see they are signed in as an admin
- * rather than a super admin without asking anybody.
- *
- * **No variant branding anywhere.** This screen belongs to us. Dressing it in
- * Smile Care's teal would be pretending an invented clinic has staff.
+ * The sign-in page lives under this layout and must render without a session,
+ * which is why the shell is not wrapped around everything unconditionally.
  */
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const session = await getAdminSession();
 
-  /* The sign-in page lives under this layout and must render without one. */
   if (!session) return <>{children}</>;
 
-  return <Shell session={session}>{children}</Shell>;
-}
+  /* Built from the role. The super-admin entries are absent rather than
+     disabled for anybody else — see the note in `AdminShell`. */
+  /*
+    Grouped by what somebody came here to do, rather than by which table each
+    screen happens to write.
 
-function Shell({
-  session,
-  children,
-}: {
-  session: AdminSession;
-  children: React.ReactNode;
-}) {
+    "Content", "Testimonials", "Questions" and "Menu" are all editing the site;
+    "Enquiries" is the work that arrives on its own. Everything under the super
+    admin's fold decides what the site *is* rather than what it says — who it is
+    for, what it is called, who may see it — which is the line that makes it
+    obvious why those four are the ones not everybody gets.
+  */
   const items = [
     { href: "/admin", label: "Today" },
+    { href: "/admin/enquiries", label: "Enquiries" },
     { href: "/admin/content", label: "Content" },
+    { href: "/admin/testimonials", label: "Testimonials" },
+    { href: "/admin/questions", label: "Questions" },
+    { href: "/admin/pages", label: "Pages" },
+    { href: "/admin/menu", label: "Menu" },
     ...(session.isSuperAdmin
       ? [
+          { href: "/admin/media", label: "Pictures" },
           { href: "/admin/variants", label: "Businesses" },
+          { href: "/admin/branding", label: "Brand" },
           { href: "/admin/links", label: "Share links" },
         ]
       : []),
   ];
 
   return (
-    <div className="flex min-h-dvh flex-col">
-      <header className="border-b border-border bg-surface">
-        <div className="container-page flex h-16 items-center gap-6">
-          <Link href="/admin" className="font-display font-semibold tracking-tight">
-            Restaurant demo
-          </Link>
-
-          <nav aria-label="Panel" className="hidden items-center gap-1 sm:flex">
-            {items.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-surface-2 hover:text-text"
-              >
-                {item.label}
-              </Link>
-            ))}
-          </nav>
-
-          <div className="ml-auto flex items-center gap-3">
-            <span className="hidden items-center gap-2 text-sm text-muted sm:flex">
-              {session.name}
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-surface-2 px-2.5 py-1 text-xs font-medium text-text">
-                {session.isSuperAdmin && <ShieldCheck className="size-3" aria-hidden />}
-                {session.roleLabel}
-              </span>
-            </span>
-
-            <form action={signOut}>
-              <button
-                type="submit"
-                className="rounded-lg border border-border px-3 py-2 text-sm transition-colors hover:bg-surface-2"
-              >
-                Sign out
-              </button>
-            </form>
-          </div>
-        </div>
-
-        <nav aria-label="Panel" className="container-page flex gap-1 pb-3 sm:hidden">
-          {items.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:bg-surface-2 hover:text-text"
-            >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
-      </header>
-
-      <main className="flex-1">{children}</main>
-    </div>
+    <AdminShell
+      brand="Restaurant demo"
+      items={items}
+      name={session.name}
+      roleLabel={session.roleLabel}
+      isSuperAdmin={session.isSuperAdmin}
+      signOutAction={signOut}
+    >
+      {children}
+    </AdminShell>
   );
 }

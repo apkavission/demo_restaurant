@@ -43,6 +43,45 @@ export interface Variant {
   defaultMode: "light" | "dark";
   allowModeToggle: boolean;
   visibility: "public" | "link_only";
+
+  /**
+   * The mark, as the header needs it.
+   *
+   * Two files rather than one: a logo drawn for a white page disappears on a
+   * dark one, and these sites have a theme toggle. Null on either falls back to
+   * setting the name as type, which is always available and never broken.
+   */
+  logo: { light: string | null; dark: string | null };
+
+  /**
+   * Whether the mark already contains the name.
+   *
+   * A lockup with the name printed beside it again is the commonest way a site
+   * with a perfectly good logo looks amateur.
+   */
+  logoShowsName: boolean;
+
+  /**
+   * The picture a messaging app shows when the link is pasted.
+   *
+   * A link with no card is a grey rectangle in a WhatsApp thread, and a demo
+   * sent to a prospect is almost always pasted into one before it is opened.
+   */
+  ogImage: string | null;
+
+  metaTitle: string | null;
+  metaDescription: string | null;
+}
+
+/**
+ * Where a stored file is served from.
+ *
+ * Composed rather than stored, so moving the bucket is one change in one place.
+ */
+const BUCKET_URL = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/demo-media`;
+
+function fileUrl(key: string | null | undefined): string | null {
+  return key ? `${BUCKET_URL}/${key}` : null;
 }
 
 function shape(row: VariantRow): Variant {
@@ -60,6 +99,15 @@ function shape(row: VariantRow): Variant {
     defaultMode: row.default_mode === "dark" ? "dark" : "light",
     allowModeToggle: row.allow_mode_toggle,
     visibility: row.visibility === "link_only" ? "link_only" : "public",
+
+    logo: {
+      light: fileUrl((row as { light?: { storage_key: string } | null }).light?.storage_key),
+      dark: fileUrl((row as { dark?: { storage_key: string } | null }).dark?.storage_key),
+    },
+    ogImage: fileUrl((row as { og?: { storage_key: string } | null }).og?.storage_key),
+    logoShowsName: Boolean(row.logo_shows_name),
+    metaTitle: row.meta_title,
+    metaDescription: row.meta_description,
   };
 }
 
@@ -69,7 +117,7 @@ export const listVariants = cache(async (): Promise<Variant[]> => {
 
   const { data, error } = await supabase
     .from("variants")
-    .select("*")
+    .select(`*, light:media!variants_logo_light_id_fkey(storage_key), dark:media!variants_logo_dark_id_fkey(storage_key), og:media!variants_og_image_id_fkey(storage_key)`)
     .eq("is_active", true)
     .order("sort_order");
 
@@ -87,7 +135,7 @@ export const getVariant = cache(async (slug: string): Promise<Variant | null> =>
 
   const { data, error } = await supabase
     .from("variants")
-    .select("*")
+    .select(`*, light:media!variants_logo_light_id_fkey(storage_key), dark:media!variants_logo_dark_id_fkey(storage_key), og:media!variants_og_image_id_fkey(storage_key)`)
     .eq("slug", slug)
     .eq("is_active", true)
     .maybeSingle();
@@ -109,7 +157,7 @@ export const getDefaultVariant = cache(async (): Promise<Variant | null> => {
 
   const { data } = await supabase
     .from("variants")
-    .select("*")
+    .select(`*, light:media!variants_logo_light_id_fkey(storage_key), dark:media!variants_logo_dark_id_fkey(storage_key), og:media!variants_og_image_id_fkey(storage_key)`)
     .eq("is_active", true)
     .eq("is_default", true)
     .maybeSingle();
@@ -131,7 +179,7 @@ export const getNav = cache(async (variantId: string): Promise<NavItemRow[]> => 
 
   const { data, error } = await supabase
     .from("nav_items")
-    .select("*")
+    .select(`*, light:media!variants_logo_light_id_fkey(storage_key), dark:media!variants_logo_dark_id_fkey(storage_key), og:media!variants_og_image_id_fkey(storage_key)`)
     .eq("variant_id", variantId)
     .eq("is_active", true)
     .order("sort_order");
@@ -151,7 +199,7 @@ export const getOffers = cache(async (variantId: string): Promise<OfferRow[]> =>
   */
   const { data, error } = await supabase
     .from("dishes")
-    .select("*")
+    .select(`*, light:media!variants_logo_light_id_fkey(storage_key), dark:media!variants_logo_dark_id_fkey(storage_key), og:media!variants_og_image_id_fkey(storage_key)`)
     .eq("variant_id", variantId)
     .order("sort_order");
 
@@ -164,7 +212,7 @@ export const getPeople = cache(async (variantId: string): Promise<PersonRow[]> =
 
   const { data, error } = await supabase
     .from("team")
-    .select("*")
+    .select(`*, light:media!variants_logo_light_id_fkey(storage_key), dark:media!variants_logo_dark_id_fkey(storage_key), og:media!variants_og_image_id_fkey(storage_key)`)
     .eq("variant_id", variantId)
     .order("sort_order");
 
@@ -177,7 +225,7 @@ export const getTestimonials = cache(async (variantId: string): Promise<Testimon
 
   const { data, error } = await supabase
     .from("testimonials")
-    .select("*")
+    .select(`*, light:media!variants_logo_light_id_fkey(storage_key), dark:media!variants_logo_dark_id_fkey(storage_key), og:media!variants_og_image_id_fkey(storage_key)`)
     .eq("variant_id", variantId)
     .order("sort_order");
 
@@ -190,7 +238,7 @@ export const getFaqs = cache(async (variantId: string): Promise<FaqRow[]> => {
 
   const { data, error } = await supabase
     .from("faqs")
-    .select("*")
+    .select(`*, light:media!variants_logo_light_id_fkey(storage_key), dark:media!variants_logo_dark_id_fkey(storage_key), og:media!variants_og_image_id_fkey(storage_key)`)
     .eq("variant_id", variantId)
     .order("sort_order");
 

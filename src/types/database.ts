@@ -17,14 +17,14 @@ import type { Database as Generated } from "./database.generated";
  * and the names below change with the database rather than drifting from it.
  */
 /**
- * The generated schema, plus the two functions the generator does not cover.
+ * The generated schema, plus the functions the generator does not cover.
  *
  * `scripts/gen-types.mjs` reads tables, views and enums out of
  * `information_schema`. It does not read functions — their argument and return
  * types live in `pg_proc` in a form that needs real parsing, and a generator
  * that guesses at those would be worse than one that admits it does not do them.
  *
- * So these two are written by hand, and they are the two the proxy depends on.
+ * So these are written by hand, and they are the ones the proxy depends on.
  * If either signature changes in a migration and this is not updated, the RPC
  * fails loudly at the first request rather than silently returning nothing —
  * which is the right way for this particular mistake to show up, because the
@@ -48,10 +48,39 @@ export type Database = {
         Args: { p_slug: string; p_token?: string | null };
         Returns: { verdict: string; allowed_slug: string | null }[];
       };
-      /** Count one visit, when a share link is first opened. */
+      /**
+       * Count one opening, at most once every half hour.
+       *
+       * The browser and referrer are optional because the throttle means most
+       * calls have nothing new to record — see 20260903000050.
+       */
       note_share_visit: {
-        Args: { p_token: string };
+        Args: {
+          p_token: string;
+          p_user_agent?: string | null;
+          p_referrer?: string | null;
+        };
         Returns: undefined;
+      };
+      /**
+       * What happened to this token, for the screen shown to whoever holds it.
+       *
+       * 'live' | 'expired' | 'revoked' | 'used_up' | 'unknown'. Everything but
+       * the state is null for a token that does not exist.
+       */
+      link_state: {
+        Args: { p_token: string };
+        Returns: {
+          state: string;
+          expires_at: string | null;
+          revoked_at: string | null;
+          business: string | null;
+        }[];
+      };
+      /** Every opening of one link, newest first. A super admin's question. */
+      share_link_opens_for: {
+        Args: { p_link_id: string };
+        Returns: { opened_at: string; user_agent: string | null; referrer: string | null }[];
       };
     };
   };

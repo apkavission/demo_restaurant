@@ -1,7 +1,8 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { Copy, CopyPlus, Loader2, Link2Off } from "lucide-react";
+import { BrandSpinner } from "@/components/brand/brand-loader";
+import { Copy, CopyPlus, Link2Off } from "lucide-react";
 import {
   createShareLink,
   revokeShareLink,
@@ -12,6 +13,7 @@ import {
 } from "@/lib/actions/admin";
 import { idleState } from "@/lib/form-state";
 import { cn } from "@/lib/utils";
+import { useBusyWhile } from "@/components/forms/use-busy-while";
 
 const FIELD =
   "block w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm " +
@@ -54,6 +56,7 @@ export function OfferEditor({
   };
 }) {
   const [state, action, pending] = useActionState(saveOffer, idleState);
+  useBusyWhile(pending, "Saving offer");
 
   return (
     <form action={action} className="rounded-[var(--radius-card)] border border-border bg-surface p-5">
@@ -114,7 +117,7 @@ export function OfferEditor({
           disabled={pending}
           className="ml-auto inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-sm transition-colors hover:bg-surface-2 disabled:opacity-60"
         >
-          {pending && <Loader2 className="size-3.5 animate-spin" aria-hidden />}
+          {pending && <BrandSpinner />}
           {pending ? "Saving" : "Save"}
         </button>
 
@@ -137,6 +140,7 @@ export function PersonEditor({
   };
 }) {
   const [state, action, pending] = useActionState(savePerson, idleState);
+  useBusyWhile(pending, "Saving person");
 
   return (
     <form action={action} className="rounded-[var(--radius-card)] border border-border bg-surface p-5">
@@ -195,7 +199,7 @@ export function PersonEditor({
           disabled={pending}
           className="ml-auto inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-sm transition-colors hover:bg-surface-2 disabled:opacity-60"
         >
-          {pending && <Loader2 className="size-3.5 animate-spin" aria-hidden />}
+          {pending && <BrandSpinner />}
           {pending ? "Saving" : "Save"}
         </button>
 
@@ -220,6 +224,7 @@ export function VisibilityToggle({
   visibility: string;
 }) {
   const [state, action, pending] = useActionState(setVariantVisibility, idleState);
+  useBusyWhile(pending, "Saving variant visibility");
   const next = visibility === "public" ? "link_only" : "public";
 
   return (
@@ -255,6 +260,7 @@ export function ShareLinkForm({
   variants: { id: string; name: string }[];
 }) {
   const [state, action, pending] = useActionState(createShareLink, idleState);
+  useBusyWhile(pending, "Creating share link");
 
   return (
     <form action={action} className="space-y-4 rounded-[var(--radius-card)] border border-border bg-surface p-6">
@@ -317,7 +323,7 @@ export function ShareLinkForm({
           disabled={pending}
           className="inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-accent-fg transition-opacity hover:opacity-90 disabled:opacity-60"
         >
-          {pending && <Loader2 className="size-4 animate-spin" aria-hidden />}
+          {pending && <BrandSpinner />}
           {pending ? "Creating" : "Create the link"}
         </button>
 
@@ -354,6 +360,7 @@ export function CopyLink({ url }: { url: string }) {
 
 export function RevokeLink({ id }: { id: string }) {
   const [state, action, pending] = useActionState(revokeShareLink, idleState);
+  useBusyWhile(pending, "Working");
 
   return (
     <form action={action}>
@@ -388,6 +395,7 @@ export function RevokeLink({ id }: { id: string }) {
 export function CloneVariant({ id, name }: { id: string; name: string }) {
   const [open, setOpen] = useState(false);
   const [state, action, pending] = useActionState(cloneVariant, idleState);
+  useBusyWhile(pending, "Working");
 
   if (!open) {
     return (
@@ -445,7 +453,7 @@ export function CloneVariant({ id, name }: { id: string; name: string }) {
           disabled={pending}
           className="inline-flex items-center gap-2 rounded-lg bg-accent px-3 py-1.5 text-xs font-medium text-accent-fg disabled:opacity-60"
         >
-          {pending && <Loader2 className="size-3.5 animate-spin" aria-hidden />}
+          {pending && <BrandSpinner />}
           {pending ? "Copying" : "Copy"}
         </button>
 
