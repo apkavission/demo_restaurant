@@ -16,7 +16,7 @@ import { mediaUrl } from "@/lib/admin-content";
  * out, so a demo that gains a route does not quietly start shadowing somebody's
  * page.
  */
-export const RESERVED_SLUGS = ["book", "contact", "menu", "people", "questions", "reviews"] as const;
+export { RESERVED_SLUGS } from "@/lib/reserved-slugs";
 
 export interface PageSection {
   id: string;

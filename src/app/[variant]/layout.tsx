@@ -84,7 +84,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
  *
  * **The demo banner is always there and says what this is.** A prospect looking
  * at Smile Care Dental Studio should never be in any doubt that they are
- * looking at a demonstration built by Apka Vission — with invented doctors and
+ * looking at a demonstration built by Rahvian — with invented doctors and
  * invented prices. Removing that line to make the demo more convincing would be
  * the wrong kind of convincing.
  */
@@ -108,7 +108,7 @@ export default async function VariantLayout({ children, params }: Props) {
           <div className="container-page flex flex-wrap items-center justify-between gap-3 py-2 text-xs">
             <p className="text-muted">
               <span className="font-semibold text-text">Demonstration site.</span>{" "}
-              Built by Apka Vission. Every name, price and person here is invented.
+              Built by Rahvian. Every name, price and person here is invented.
             </p>
 
             <VariantSwitcher
@@ -204,7 +204,7 @@ export default async function VariantLayout({ children, params }: Props) {
 
           <div className="border-t border-border">
             <p className="container-page py-5 text-xs text-muted">
-              A demonstration built by Apka Saathi Private Limited. Not a real
+              A demonstration built by Rahvian Technologies Private Limited. Not a real
               business, and nothing here is medical advice.
             </p>
           </div>

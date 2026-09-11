@@ -48,8 +48,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     ...(session.isSuperAdmin
       ? [
           { href: "/admin/media", label: "Pictures" },
+          { href: "/admin/website", label: "Website" },
           { href: "/admin/variants", label: "Businesses" },
-          { href: "/admin/branding", label: "Brand" },
           { href: "/admin/links", label: "Share links" },
         ]
       : []),
